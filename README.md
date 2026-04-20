@@ -1,4 +1,4 @@
-# Film Grain Renderer
+# Graniac
 
 Physics-based film grain synthesis using the inhomogeneous Boolean model.
 

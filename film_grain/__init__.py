@@ -1,5 +1,5 @@
 """
-film_grain: Physics-based film grain rendering using the Boolean model.
+Graniac: Physics-based film grain rendering using the Boolean model.
 
 Based on:
   Newson, Faraj, Delon, Galerne. "Realistic Film Grain Rendering."
@@ -10,7 +10,6 @@ the output pixel values emerge from the statistical density of simulated
 silver halide crystals, filtered through a Gaussian kernel modeling the
 optical enlargement process and human vision.
 """
-
 from .renderer import render_grayscale, render_color, warmup_jit
 from .renderer_fast import render_grayscale_fast, render_color_fast
 from .profiles import FilmProfile, get_profile, list_profiles, PROFILES
@@ -39,3 +38,4 @@ __all__ = [
     "apply_visibility_modulation",
     "apply_chromatic_aberration",
 ]
+
