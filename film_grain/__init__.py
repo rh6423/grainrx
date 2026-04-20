@@ -1,5 +1,5 @@
 """
-Graniac: Physics-based film grain rendering using the Boolean model.
+GrainRX: Physics-based film grain rendering using the Boolean model.
 
 Based on:
   Newson, Faraj, Delon, Galerne. "Realistic Film Grain Rendering."

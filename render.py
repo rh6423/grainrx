@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-render.py — Graniac: Apply physics-based film grain to an image.
+render.py — GrainRX: Apply physics-based film grain to an image.
 
 Usage examples:
 
@@ -85,7 +85,7 @@ def rgb_to_gray(rgb):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Graniac: Physics-based film grain rendering using the Boolean model.",
+        description="GrainRX: Physics-based film grain rendering using the Boolean model.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__
     )

@@ -1,4 +1,4 @@
-# Graniac
+# GrainRX
 
 Physics-based film grain synthesis using the inhomogeneous Boolean model.
 
