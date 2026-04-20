@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tri-X Grain Parameter Ranges</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; }
+        h1 { color: #333; }
+        .parameter { margin: 30px 0; padding: 20px; background: #f5f5f5; border-radius: 8px; }
+        .range-bar { height: 30px; position: relative; background: #ddd; border-radius: 4px; margin: 10px 0; overflow: hidden; }
+        .range-min { position: absolute; left: 0; top: 0; bottom: 0; background: #e74c3c; opacity: 0.3; }
+        .range-safe { position: absolute; left: 0; top: 0; bottom: 0; background: #27ae60; opacity: 0.5; }
+        .range-max { position: absolute; right: 0; top: 0; bottom: 0; background: #e74c3c; opacity: 0.3; }
+        .marker { position: absolute; top: -5px; bottom: -5px; width: 2px; background: #333; }
+        .marker-label { position: absolute; top: 35px; text-align: center; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f8f9fa; }
+        .safe { color: #27ae60; }
+        .warning { color: #e74c3c; }
+    </style>
+</head>
+<body>
+    <h1>Tri-X Grain Parameter Ranges</h1>
+    
+    <div class="parameter">
+        <h3>mu_r (Grain Size)</h3>
+        <p><strong>Safe Range:</strong> 0.03 - 0.12</p>
+        <p><strong>Default:</strong> 0.07</p>
+        <div class="range-bar">
+            <div class="range-safe" style="left: 25%; right: 25%;"></div>
+            <div class="marker" style="left: 12.5%;"><span class="marker-label">0.03 (min)</span></div>
+            <div class="marker" style="left: 50%;"><span class="marker-label">0.07 (default)</span></div>
+            <div class="marker" style="left: 87.5%;"><span class="marker-label">0.12 (max)</span></div>
+        </div>
+    </div>
+    
+    <div class="parameter">
+        <h3>sigma_r (Clumping)</h3>
+        <p><strong>Safe Range:</strong> 0.01 - 0.05</p>
+        <p><strong>Default:</strong> 0.025</p>
+        <p><strong>Warning:</strong> Keep sigma_r/mu_r ratio ≤ 1.0 to avoid extreme clumping</p>
+        <div class="range-bar">
+            <div class="range-safe" style="left: 16%; right: 16%;"></div>
+            <div class="marker" style="left: 8%;"><span class="marker-label">0.01 (min)</span></div>
+            <div class="marker" style="left: 42%;"><span class="marker-label">0.025 (default)</span></div>
+            <div class="marker" style="left: 75%;"><span class="marker-label">0.05 (max)</span></div>
+        </div>
+    </div>
+    
+    <div class="parameter">
+        <h3>filter_sigma (Softness)</h3>
+        <p><strong>Safe Range:</strong> 0.6 - 1.0</p>
+        <p><strong>Default:</strong> 0.8</p>
+        <div class="range-bar">
+            <div class="range-safe" style="left: 20%; right: 20%;"></div>
+            <div class="marker" style="left: 13%;"><span class="marker-label">0.6 (min)</span></div>
+            <div class="marker" style="left: 53%;"><span class="marker-label">0.8 (default)</span></div>
+            <div class="marker" style="left: 87%;"><span class="marker-label">1.0 (max)</span></div>
+        </div>
+    </div>
+    
+    <h2>Parameter Combinations</h2>
+    <table>
+        <tr><th>Setting</th><th>mu_r</th><th>sigma_r</th><th>filter_sigma</th></tr>
+        <tr><td>Minimum (barely visible)</td><td>0.02</td><td>0.01</td><td>0.8</td></tr>
+        <tr class="safe"><td>Default (Tri-X balanced)</td><td><strong>0.07</strong></td><td><strong>0.025</strong></td><td><strong>0.8</strong></td></tr>
+        <tr><td>Maximum (heavy but realistic)</td><td>0.12</td><td>0.05</td><td>1.0</td></tr>
+    </table>
+    
+    <h2>Validation Rules</h2>
+    <ul>
+        <li class="warning">mu_r > 0.12: <strong>Warning</strong> - Grain becomes excessive</li>
+        <li class="warning">sigma_r > 0.05: <strong>Warning</strong> - Extreme clumping artifacts</li>
+        <li class="warning">sigma_r/mu_r > 1.0: <strong>Warning</strong> - Physically unrealistic clumping</li>
+        <li class="warning">filter_sigma < 0.6: <strong>Warning</strong> - Shows individual grains (only for extreme zoom)</li>
+        <li class="warning">filter_sigma > 1.0: <strong>Warning</strong> - Over-smoothed, loses texture</li>
+    </ul>
+</body>
+</html>
