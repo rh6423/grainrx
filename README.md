@@ -1,3 +1,4 @@
+```markdown
 # GrainRX
 
 Physics-based film grain synthesis using the inhomogeneous Boolean model.
@@ -54,13 +55,39 @@ We model grain as an **inhomogeneous Boolean model** (Newson et al., IPOL 2017):
   The zoom parameter renders grain at any resolution, even down to
   individual grain scale.
 
+## Prerequisites
+
+- **Python 3.9+** installed on your system
+  - Check your version: `python --version` or `python3 --version`
+  - Download from [python.org](https://www.python.org/downloads/) if needed
+
 ## Installation
+
+### Option 1: Using Virtual Environment (Recommended)
+
+This is the recommended approach to avoid conflicts with other Python projects:
+
+```bash
+# Create a virtual environment
+python -m venv venv
+
+# Activate the virtual environment
+# On macOS/Linux:
+source venv/bin/activate
+# On Windows:
+venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### Option 2: Global Installation (Not Recommended)
+
+⚠️ **Warning**: This may conflict with other Python projects on your system.
 
 ```bash
 pip install -r requirements.txt
 ```
-
-Requires Python 3.9+ with NumPy, Numba, Pillow, and SciPy.
 
 ## Two Renderers
 
@@ -257,6 +284,28 @@ of gray level) and amplitude (the variance LUT, signal-dependent). The key
 approximation is that the autocovariance *shape* is approximately constant
 across gray levels — only its amplitude varies. This holds well when the
 filter is wider than the grains, which is the normal photographic case.
+
+## Troubleshooting
+
+### Common Issues
+
+**"command not found: python"**
+- Try `python3` instead of `python` on some systems
+- Or add Python to your system PATH
+
+**"Permission denied" when installing packages**
+- Use a virtual environment (recommended) or install with `--user` flag:
+  ```bash
+  pip install --user -r requirements.txt
+  ```
+
+**Slow first run with JIT compilation warnings**
+- The Monte Carlo renderer uses Numba's JIT compiler which compiles code on first use
+- This takes ~5-15 seconds but subsequent runs will be much faster
+
+**"ModuleNotFoundError: No module named 'film_grain'"**
+- Make sure you're running from the project directory
+- Verify you've activated your virtual environment if using one
 
 ## References
 
