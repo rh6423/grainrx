@@ -21,15 +21,31 @@ else
     echo "⚠️  No virtual environment found, using system Python..."
 fi
 
-# Check if dependencies are installed
+# Install dependencies from the single source of truth if FastAPI isn't present
 if ! python -c "import fastapi" 2>/dev/null; then
-    echo "📦 Installing dependencies..."
-    pip install fastapi uvicorn pillow numpy numba
+    echo "📦 Installing dependencies from requirements.txt..."
+    pip install -r "$SCRIPT_DIR/requirements.txt"
+    # requirements.txt may or may not pin the UI extras; ensure they're there
+    pip install fastapi uvicorn
 fi
 
-# Start the server
-cd "$SCRIPT_DIR/grainui"
-echo "🚀 Opening http://127.0.0.1:8000 in your browser..."
-open http://127.0.0.1:8000 2>/dev/null || echo "🌐 Open http://127.0.0.1:8000 manually"
+# Start the server from the gui directory (matches the repo layout)
+cd "$SCRIPT_DIR/gui"
+
+URL="http://127.0.0.1:${PORT:-8000}"
+echo "🚀 Opening $URL in your browser..."
+
+# Cross-platform browser open: macOS uses `open`, Linux uses `xdg-open`,
+# Windows (git-bash / WSL) uses `start`. Fall back to a printed URL.
+if command -v open >/dev/null 2>&1; then
+    open "$URL" 2>/dev/null || true
+elif command -v xdg-open >/dev/null 2>&1; then
+    xdg-open "$URL" 2>/dev/null || true
+elif command -v start >/dev/null 2>&1; then
+    start "$URL" 2>/dev/null || true
+else
+    echo "🌐 Open $URL manually"
+fi
 echo ""
-uvicorn app:app --host 127.0.0.1 --port 8000 --reload
+
+uvicorn app:app --host 127.0.0.1 --port "${PORT:-8000}" --reload
