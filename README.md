@@ -1,4 +1,4 @@
-# GrainRX
+p# GrainRX
 
 Physics-based film grain synthesis using the inhomogeneous Boolean model.
 
@@ -375,8 +375,8 @@ filter is wider than the grains, which is the normal photographic case.
 - The Monte Carlo renderer uses Numba's JIT compiler which compiles code on first use
 - This takes ~5-15 seconds but subsequent runs will be much faster
 
-**"ModuleNotFoundError: No module named 'film_grain'"**
-- Make sure you're running from the project directory
+**"ModuleNotFoundError: No module named 'core'"**
+- Make sure you're running from the project directory (where `core/` folder is located)
 - Verify you've activated your virtual environment if using one
 
 ## References
