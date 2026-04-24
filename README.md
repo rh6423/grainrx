@@ -80,14 +80,6 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### Option 2: Global Installation (Not Recommended)
-
-⚠️ **Warning**: This may conflict with other Python projects on your system.
-
-```bash
-pip install -r requirements.txt
-```
-
 ## Two Renderers
 
 This project includes **two rendering engines** for different use cases:
