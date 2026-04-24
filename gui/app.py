@@ -24,12 +24,12 @@ from PIL import Image
 # Add parent directory to path for film_grain import
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from film_grain import (
+from core import (
     render_grayscale, render_color,
     render_grayscale_fast, render_color_fast,
     get_profile, warmup_jit
 )
-from film_grain.profiles import PROFILES
+from core.profiles import PROFILES
 
 app = FastAPI(title="GrainRX UI", version="1.0.0")
 

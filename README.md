@@ -134,6 +134,63 @@ python render.py photo.jpg -o custom.jpg --mu-r 0.06 --sigma-r 0.02 --fast
 python render.py --list-profiles
 ```
 
+## Running the Web UI
+
+GrainRX includes a web-based graphical interface for easy parameter exploration:
+
+### Using the Convenience Script (Recommended)
+
+```bash
+# macOS/Linux
+./grainui.sh
+
+# Windows (if you have bash/git-bash installed)
+bash grainui.sh
+```
+
+The script will:
+1. Create and activate a virtual environment (if needed)
+2. Install dependencies
+3. Start the web server on http://localhost:8000
+
+### Manual Startup
+
+```bash
+# Activate your virtual environment first (if using one)
+source venv/bin/activate  # macOS/Linux
+# or
+venv\Scripts\activate     # Windows
+
+# Start the web UI
+python gui/app.py
+```
+
+Then open http://localhost:8000 in your browser.
+
+### Using the Web UI
+
+1. **Upload an image** - Drag and drop or click to select
+2. **Choose a film profile** - Select from the dropdown menu
+3. **Adjust parameters** - Use sliders for grain size, clumping, etc.
+4. **Toggle options** - Enable B&W mode, H&D curve, visibility modulation
+5. **Render** - Click "Apply Grain" to process your image
+6. **Download** - Save the result with the download button
+
+### Troubleshooting the Web UI
+
+**"Port 8000 already in use"**
+- Change the port by setting the PORT environment variable:
+  ```bash
+  PORT=8080 python gui/app.py
+  ```
+
+**"ModuleNotFoundError"**
+- Make sure you've installed dependencies: `pip install -r requirements.txt`
+
+**Image won't upload**
+- Check file size limits (default is reasonable for most photos)
+- Supported formats: JPG, JPEG, PNG, BMP, TIFF
+
 ## Parameters
 
 ### Grain Geometry

@@ -38,7 +38,7 @@ except ImportError:
     print("Error: Pillow is required. Install with: pip install Pillow")
     sys.exit(1)
 
-from film_grain import (
+from core import (
     render_grayscale, render_color, warmup_jit,
     render_grayscale_fast, render_color_fast,
     get_profile, list_profiles,
