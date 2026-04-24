@@ -138,7 +138,7 @@ The following examples demonstrate different film profiles applied to the same s
 
 | Original | Tri-X 400 (B&W) | Portra 400 (Color) | Delta 3200 (B&W) |
 |----------|-----------------|--------------------|------------------|
-| ![Original](gui/outputs/sample_original.jpg) | ![Tri-X](gui/outputs/sample_trix_bw.jpg) | ![Portra 400](gui/outputs/sample_portra400_color.jpg) | ![Delta 3200](gui/outputs/sample_delta3200_bw.jpg) |
+| ![Original](examples/source_original.jpg) | ![Tri-X](examples/sample_trix_bw.jpg) | ![Portra 400](examples/sample_portra400_color.jpg) | ![Delta 3200](examples/sample_delta3200_bw.jpg) |
 
 **Notes:**
 - **Tri-X 400**: Pronounced, irregular grain with strong clumping — the iconic photojournalism look
@@ -146,6 +146,10 @@ The following examples demonstrate different film profiles applied to the same s
 - **Delta 3200**: Dramatically large grain that becomes a textural element — extreme high-speed film
 
 Rendered with the fast analytical renderer (`--fast`). For maximum realism on coarse-grain profiles like Delta 3200, use the Monte Carlo renderer (`--mc 100+`).
+
+### More Examples
+
+See the [`examples/`](examples/) directory for additional sample outputs, including a side-by-side comparison of the fast and Monte Carlo renderers.
 
 ## Running the Web UI
 
