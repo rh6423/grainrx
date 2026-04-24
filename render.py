@@ -295,12 +295,22 @@ def main():
     if args.visibility:
         print("Applying perceptual visibility modulation...")
         result_f = result.astype(np.float64) / 255.0
+        
+        # If zoom was applied, resize original_norm to match output dimensions
+        if args.zoom != 1.0:
+            orig_pil = Image.fromarray((original_norm * 255).astype(np.uint8))
+            new_h, new_w = result_f.shape[:2]
+            orig_pil = orig_pil.resize((new_w, new_h), Image.BILINEAR)
+            original_norm_resized = np.array(orig_pil).astype(np.float64) / 255.0
+        else:
+            original_norm_resized = original_norm
+        
         if result_f.ndim == 2:
-            result_f = apply_visibility_modulation(result_f, original_norm)
+            result_f = apply_visibility_modulation(result_f, original_norm_resized)
         else:
             for ch in range(3):
                 result_f[:, :, ch] = apply_visibility_modulation(
-                    result_f[:, :, ch], original_norm[:, :, ch]
+                    result_f[:, :, ch], original_norm_resized[:, :, ch]
                 )
         result = np.clip(result_f * 255, 0, 255).astype(np.uint8)
 

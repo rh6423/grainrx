@@ -11,43 +11,34 @@
 | Category | Tests Run | Passed | Failed |
 |----------|-----------|--------|--------|
 | CLI Interface | 14 | 14 | 0 |
-| Edge Cases | 8 | 7 | 1 |
+| Edge Cases | 8 | 8 | 0 |
 | Web UI API | 3 | 3 | 0 |
 | Python API | 9 | 9 | 0 |
-| **TOTAL** | **34** | **33** | **1** |
+| **TOTAL** | **34** | **34** | **0** |
 
-**Overall Status:** ✅ PASS (with 1 bug identified)
+**Overall Status:** ✅ PASS (all tests passing)
 
 ---
 
-## Bug Report
+## Bug Fixes Applied
 
-### BUG-001: Shape Mismatch with `--zoom` + `--visibility` Combination
+### BUG-001: Shape Mismatch with `--zoom` + `--visibility` Combination [FIXED]
 
 **Severity:** Medium  
 **Component:** CLI / Post-processing pipeline  
-**Location:** `core/postprocess.py`, line 100
+**Location:** `render.py`, lines 294-311
 
 **Description:**  
-When using the `--zoom` parameter together with `--visibility`, a ValueError occurs because the visibility modulation function attempts to subtract the original image from the zoomed output, causing a shape mismatch.
+When using the `--zoom` parameter together with `--visibility`, a ValueError occurred because the visibility modulation function attempted to subtract the original image from the zoomed output, causing a shape mismatch.
 
-**Reproduction Steps:**
+**Fix Applied:**  
+Modified `render.py` to resize `original_norm` to match the zoomed output dimensions before applying visibility modulation. When `--zoom != 1.0`, the original normalized image is now resized using PIL's BILINEAR interpolation to match the rendered output size.
+
+**Verification:**
 ```bash
 python render.py input.png -o output.png --profile tri-x --bw --fast --hd-curve --visibility --zoom 1.5
 ```
-
-**Error Message:**
-```
-ValueError: operands could not be broadcast together with shapes (247,382) (165,255)
-```
-
-**Root Cause:**  
-The `apply_visibility_modulation()` function receives the zoomed rendered image but tries to subtract the original (non-zoomed) normalized image. The visibility modulation needs to either:
-1. Be applied before zooming, or
-2. Resize the original reference to match the zoomed output
-
-**Workaround:**  
-Use `--zoom` without `--visibility`, or apply visibility modulation separately after rendering.
+Result: ✅ PASS - Renders successfully with no errors.
 
 ---
 
@@ -72,7 +63,7 @@ Use `--zoom` without `--visibility`, or apply visibility modulation separately a
 | CLI-13 | Seed reproducibility | ✅ PASS |
 | CLI-14 | Filter sigma override | ✅ PASS |
 
-### Edge Case Tests (7/8 PASSED)
+### Edge Case Tests (8/8 PASSED)
 
 | Test | Scenario | Result |
 |------|----------|--------|
@@ -83,7 +74,7 @@ Use `--zoom` without `--visibility`, or apply visibility modulation separately a
 | EDGE-05 | Low MC samples (5) | ✅ PASS |
 | EDGE-06 | HD curve option | ✅ PASS |
 | EDGE-07 | Visibility modulation | ✅ PASS |
-| EDGE-08 | Combined options (--zoom + --visibility) | ❌ FAIL (BUG-001) |
+| EDGE-08 | Combined options (--zoom + --visibility) | ✅ PASS (BUG-001 fixed) |
 
 ### Web UI API Tests (3/3 PASSED)
 
@@ -133,12 +124,13 @@ All 18 film profiles are accessible and functional:
 
 ## Recommendations
 
-1. **Fix BUG-001:** Update `apply_visibility_modulation()` to handle zoomed images properly
-2. **Add integration test:** Add a test case for the `--zoom` + `--visibility` combination
-3. **Consider adding:** A `--help-profiles` flag to show detailed info about each film profile
+1. **Add integration test:** Add a permanent test case for the `--zoom` + `--visibility` combination to prevent regression
+2. **Consider adding:** A `--help-profiles` flag to show detailed info about each film profile
 
 ---
 
 ## Conclusion
 
-GrainRX is functionally complete and working correctly across all interfaces (CLI, Web UI API, Python API). The single bug identified (BUG-001) is a medium-severity issue affecting only the specific combination of `--zoom` and `--visibility` flags. All core functionality including both renderers (fast analytical and Monte Carlo), all film profiles, and all parameter options work as expected.
+GrainRX is functionally complete and working correctly across all interfaces (CLI, Web UI API, Python API). All 34 tests pass successfully. The previously identified bug (BUG-001) has been fixed. All core functionality including both renderers (fast analytical and Monte Carlo), all film profiles, and all parameter options work as expected.
+
+**Ready for production deployment.**
