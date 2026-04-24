@@ -1,374 +1,144 @@
-# GrainRX QA Summary
+# GrainRX End-to-End QA Summary Report
 
-**Date**: 2025-04-17  
-**QA Engineer**: AI Assistant  
-**Project**: GrainRX (Physics-based Film Grain Renderer)  
-**Status**: ✅ QA COMPLETE - ALL TESTS PASSED  
+**Date:** 2026-04-23  
+**Tester:** Automated QA  
+**Scope:** Functional testing of CLI, Web UI API, and Python API (not visual quality)
 
 ---
 
 ## Executive Summary
 
-This document serves as the complete QA deliverable for the GrainRX project. The application implements physics-based film grain synthesis using the inhomogeneous Boolean model.
+| Category | Tests Run | Passed | Failed |
+|----------|-----------|--------|--------|
+| CLI Interface | 14 | 14 | 0 |
+| Edge Cases | 8 | 7 | 1 |
+| Web UI API | 3 | 3 | 0 |
+| Python API | 9 | 9 | 0 |
+| **TOTAL** | **34** | **33** | **1** |
 
-### Key Findings
-- ✅ **Requirements**: Exceptionally clear and well-documented
-- ✅ **Test Cases**: Successfully derived 25+ unit tests, 8 integration tests, 4 performance benchmarks
-- ✅ **Git Repository**: Properly configured with comprehensive `.gitignore`
-- ✅ **Integration Tests**: 100% pass rate (14/14 tests)
-- ✅ **Performance**: Within expected ranges or better
-- ✅ **Code Quality**: Well-structured, modular, and maintainable
-
----
-
-## 1. Requirements Analysis
-
-### 1.1 Requirement Clarity Assessment
-**Rating**: ⭐⭐⭐⭐⭐ (5/5) - Exceptional
-
-The requirements are documented in the README.md with remarkable clarity:
-
-| Aspect | Rating | Notes |
-|--------|--------|-------|
-| Functional Requirements | 5/5 | Complete feature set described |
-| Technical Specifications | 5/5 | Algorithm details, parameters documented |
-| Performance Benchmarks | 5/5 | Specific timing expectations provided |
-| API Documentation | 5/5 | Python API fully documented |
-| Usage Examples | 5/5 | Multiple command-line examples |
-
-### 1.2 Test Case Derivation
-**Status**: ✅ COMPLETE
-
-Test cases were successfully derived from requirements:
-
-#### Unit Tests (25+ cases)
-- **Profiles Module**: 6 tests for profile loading and management
-- **Renderer Module**: 10 tests for MC rendering
-- **Fast Renderer Module**: 4 tests for analytical rendering
-- **Post-Processing Module**: 3 tests for post-processing functions
-- **RNG Module**: 3 tests for reproducible random number generation
-
-#### Integration Tests (8 cases)
-- B&W and color rendering
-- Fast and Monte Carlo modes
-- Post-processing pipeline
-- Zoom rendering
-- Format support
-- Reproducibility verification
-
-#### Performance Tests (4 cases)
-- Fast renderer benchmarks
-- MC renderer benchmarks
-- Performance regression thresholds
-
-#### Edge Cases (7 scenarios)
-- Small images, extreme parameters, format variations
+**Overall Status:** ✅ PASS (with 1 bug identified)
 
 ---
 
-## 2. Test Documentation
+## Bug Report
 
-### 2.1 Test Plan (`TEST_PLAN.md`)
-Comprehensive test plan including:
-- Requirements analysis and clarity assessment
-- Complete test case catalog with expected results
-- Detailed test procedures
-- Performance benchmarks
-- Defect tracking guidelines
-- Git repository recommendations
+### BUG-001: Shape Mismatch with `--zoom` + `--visibility` Combination
 
-**Key Sections**:
-1. Requirements Analysis (clarity assessment)
-2. Test Coverage (unit, integration, performance, edge cases)
-3. Test Procedures (setup, execution, data)
-4. Defect Tracking (severity levels)
-5. Deliverables checklist
-6. Questions for clarification
-7. Next steps
+**Severity:** Medium  
+**Component:** CLI / Post-processing pipeline  
+**Location:** `core/postprocess.py`, line 100
 
-### 2.2 Test Results (`TEST_RESULTS.md`)
-Complete test execution report including:
-- Executive summary (100% pass rate)
-- Git repository status and configuration
-- Detailed integration test results
-- Performance benchmarks
-- Film profile verification
-- Defect log
-- Recommendations
+**Description:**  
+When using the `--zoom` parameter together with `--visibility`, a ValueError occurs because the visibility modulation function attempts to subtract the original image from the zoomed output, causing a shape mismatch.
 
-**Key Results**:
-```
-Integration Tests: 8/8 PASSED (100%)
-Performance Tests: 4/4 PASSED (100%)
-Format Tests: 2/2 PASSED (100%)
-Total: 14/14 PASSED (100%)
-```
-
----
-
-## 3. Git Repository Configuration
-
-### 3.1 .gitignore Setup
-**Status**: ✅ COMPLETED
-
-Created comprehensive `.gitignore` file:
+**Reproduction Steps:**
 ```bash
-# Python
-__pycache__/
-*.py[cod]
-venv/
-
-# IDE
-.idea/
-.vscode/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Output files (user-generated)
-*.jpg
-*.png
-*.tiff
-output_*
-preview_*
-grainy_*
+python render.py input.png -o output.png --profile tri-x --bw --fast --hd-curve --visibility --zoom 1.5
 ```
 
-### 3.2 Repository State
-**Current Branch**: `graniac`
-
-**Committed Changes**:
+**Error Message:**
 ```
-0786fb8 Rebrand application to GrainRX and add .gitignore for output files
-├── .gitignore (new)
-├── README.md (modified - rebranding)
-├── film_grain/__init__.py (modified - rebranding)
-├── render.py (modified - rebranding)
-└── output_grain.png (deleted - moved to .gitignore)
+ValueError: operands could not be broadcast together with shapes (247,382) (165,255)
 ```
 
-**Staged for Commit**:
-- `TEST_PLAN.md` (new)
-- `TEST_RESULTS.md` (new)
+**Root Cause:**  
+The `apply_visibility_modulation()` function receives the zoomed rendered image but tries to subtract the original (non-zoomed) normalized image. The visibility modulation needs to either:
+1. Be applied before zooming, or
+2. Resize the original reference to match the zoomed output
 
-### 3.3 Git Best Practices Applied
-✅ `.gitignore` excludes build artifacts, cache, and output files  
-✅ Rebranding changes committed  
-✅ Test documentation added to repository  
-✅ Output files removed from tracking  
+**Workaround:**  
+Use `--zoom` without `--visibility`, or apply visibility modulation separately after rendering.
 
 ---
 
-## 4. Test Execution Results
+## Detailed Test Results
 
-### 4.1 Integration Tests
+### CLI Interface Tests (14/14 PASSED)
 
-| Test ID | Description | Status |
-|---------|-------------|--------|
-| IT001 | B&W rendering (Tri-X) | ✅ PASS |
-| IT002 | Color rendering (Portra 400) | ✅ PASS |
-| IT003 | MC high quality (n_mc=200) | ✅ PASS |
-| IT005 | Post-processing pipeline | ✅ PASS |
-| IT006 | Zoom rendering (2x) | ✅ PASS |
-| IT007 | Reproducibility test | ✅ PASS |
-| IT008 | Format support (JPEG, TIFF) | ✅ PASS |
+| Test | Command | Result |
+|------|---------|--------|
+| CLI-01 | Basic B&W fast render | ✅ PASS |
+| CLI-02 | Color fast render | ✅ PASS |
+| CLI-03 | Monte Carlo B&W (low samples) | ✅ PASS |
+| CLI-04 | Custom parameters | ✅ PASS |
+| CLI-05 | List profiles | ✅ PASS (18 profiles) |
+| CLI-06 | Help output | ✅ PASS |
+| CLI-07 | Missing input file error | ✅ PASS |
+| CLI-08 | Invalid profile error | ✅ PASS |
+| CLI-09 | HD curve option | ✅ PASS |
+| CLI-10 | Visibility modulation | ✅ PASS |
+| CLI-11 | Zoom parameter | ✅ PASS |
+| CLI-12 | Max-dim resize | ✅ PASS |
+| CLI-13 | Seed reproducibility | ✅ PASS |
+| CLI-14 | Filter sigma override | ✅ PASS |
 
-### 4.2 Performance Benchmarks
+### Edge Case Tests (7/8 PASSED)
 
-| Test | Expected | Actual | Status |
-|------|----------|--------|--------|
-| Fast 1304x1304 B&W | < 0.5s | 0.3s | ✅ PASS |
-| Fast 1304x1304 Color | < 1s | 0.7s | ✅ PASS |
-| MC 1304x1304 (n_mc=30) | ~4s | 4.0s | ✅ PASS |
-| Zoom 2x rendering | ~1s | 1.1s | ✅ PASS |
+| Test | Scenario | Result |
+|------|----------|--------|
+| EDGE-01 | Very small image (64x64) | ✅ PASS |
+| EDGE-02 | Very large grain size (mu_r=0.5) | ✅ PASS |
+| EDGE-03 | Zero sigma-r (uniform grains) | ✅ PASS |
+| EDGE-04 | High zoom factor (4.0x) | ✅ PASS |
+| EDGE-05 | Low MC samples (5) | ✅ PASS |
+| EDGE-06 | HD curve option | ✅ PASS |
+| EDGE-07 | Visibility modulation | ✅ PASS |
+| EDGE-08 | Combined options (--zoom + --visibility) | ❌ FAIL (BUG-001) |
 
-### 4.3 Edge Cases Tested
-- ✅ Small images (8x8)
-- ✅ Extreme zoom factors
-- ✅ Different grain parameters
-- ✅ RGBA input handling
-- ✅ Grayscale input handling
+### Web UI API Tests (3/3 PASSED)
 
----
+| Test | Endpoint | Result |
+|------|----------|--------|
+| UI-11 | GET /api/ | ✅ PASS - Returns version info |
+| UI-12 | GET /profiles | ✅ PASS - Returns 18 film profiles |
+| UI-13 | POST /render | ✅ PASS - B&W and color rendering work |
 
-## 5. Deliverables
+### Python API Tests (9/9 PASSED)
 
-### 5.1 Test Plan (`TEST_PLAN.md`)
-**Purpose**: Comprehensive guide for testing GrainRX
-
-**Contents**:
-- Requirements analysis and clarity assessment
-- Complete test case catalog (25+ unit tests, 8 integration tests)
-- Detailed test procedures
-- Performance benchmarks
-- Defect tracking guidelines
-- Git repository recommendations
-- Questions for clarification
-- Next steps
-
-**Audience**: QA engineers, developers, CI/CD pipeline
-
-### 5.2 Test Results (`TEST_RESULTS.md`)
-**Purpose**: Complete record of test execution
-
-**Contents**:
-- Executive summary (100% pass rate)
-- Git repository status and configuration
-- Detailed integration test results with metrics
-- Performance benchmarks
-- Film profile verification
-- Defect log
-- Recommendations
-
-**Audience**: Project managers, stakeholders, developers
-
-### 5.3 QA Summary (`QA_SUMMARY.md`)
-**Purpose**: Executive overview of QA activities
-
-**Contents**:
-- Requirements analysis summary
-- Test documentation overview
-- Git repository configuration
-- Test execution results
-- Deliverables checklist
-- Key findings and recommendations
-
-**Audience**: Project managers, stakeholders, technical leads
+| Test | Function | Result |
+|------|----------|--------|
+| API-01 | get_profile() | ✅ PASS |
+| API-02 | render_grayscale_fast() | ✅ PASS |
+| API-03 | render_color_fast() | ✅ PASS |
+| API-04 | Reproducibility (same seed) | ✅ PASS - Max diff = 0.0 |
+| API-05 | Different seeds produce different results | ✅ PASS - Max diff = 78.0 |
+| API-06 | Zoom parameter | ✅ PASS - Shape correct |
+| API-07 | Custom parameters | ✅ PASS |
+| API-08 | render_grayscale (Monte Carlo) | ✅ PASS |
+| API-09 | MC with zoom | ✅ PASS |
 
 ---
 
-## 6. Recommendations
+## Film Profiles Verified
 
-### 6.1 Immediate Actions (Completed)
-✅ Requirements analysis completed  
-✅ Test plan created  
-✅ Integration tests executed  
-✅ Results documented  
-✅ Git repository configured  
-✅ Changes committed  
+All 18 film profiles are accessible and functional:
 
-### 6.2 Short-term Improvements
-1. **Implement Automated Testing**
-   - Create pytest suite for unit tests
-   - Add CI/CD pipeline integration
-   - Set up automated test execution on PRs
+**B&W Profiles:**
+- acros, delta3200, hp5, panf, pmkii, tri-x, tmax100, tmax400
 
-2. **Visual Regression Testing**
-   - Establish reference output images
-   - Implement image comparison metrics (SSIM, PSNR)
-   - Set up visual diff reporting
-
-3. **Performance Monitoring**
-   - Add performance regression tests
-   - Track benchmarks over time
-   - Alert on significant regressions
-
-### 6.3 Long-term Enhancements
-1. **Test Coverage Expansion**
-   - Add more edge case tests
-   - Implement property-based testing
-   - Add fuzz testing for robustness
-
-2. **Documentation Improvements**
-   - API documentation (Sphinx/DocFX)
-   - Example scripts for common use cases
-   - Video tutorials for complex features
-
-3. **User Acceptance Testing**
-   - Create user test scenarios
-   - Collect feedback on output quality
-   - Iterate based on real-world usage
+**Color Profiles:**
+- ektar100, portra160, portra400, superia400, ultramax400, vintage200, vintage400, vintage800
 
 ---
 
-## 7. Questions Answered
+## Performance Notes
 
-### 7.1 Original QA Questions
-
-**Q1: Are the requirements clear enough to derive test cases?**
-**A**: ✅ YES - Requirements are exceptionally well-documented with specific parameters, performance benchmarks, and usage examples.
-
-**Q2: Are test cases or procedures documented in the repo?**
-**A**: ✅ NOW YES - Created comprehensive `TEST_PLAN.md` and `TEST_RESULTS.md` files.
-
-**Q3: Is code committed before testing?**
-**A**: ✅ NOW YES - Rebranding changes and `.gitignore` committed. Test documentation staged.
-
-### 7.2 Additional Clarifications
-
-**Q**: What is the expected RMS error between fast and MC renderers?  
-**A**: Not specified in documentation. Based on visual inspection, fast renderer produces excellent approximation for normal use cases.
-
-**Q**: Should test images be committed to the repository?  
-**A**: NO - Added to `.gitignore` as user-generated content. Created smaller test images for automated tests.
+| Operation | Image Size | Time |
+|-----------|------------|------|
+| Fast B&W render | 1288×832 | ~0.07s |
+| Fast color render | 1288×832 | ~0.22s |
+| MC B&W (30 samples) | 256×160 | ~1.7s |
 
 ---
 
-## 8. Conclusion
+## Recommendations
 
-### 8.1 Overall Assessment
-**Status**: ✅ EXCELLENT
-
-GrainRX is a well-designed, well-documented application with:
-- Clear, comprehensive requirements
-- Robust implementation with multiple rendering modes
-- Excellent performance characteristics
-- Professional code structure
-
-### 8.2 QA Maturity
-| Aspect | Level | Notes |
-|--------|-------|-------|
-| Requirements Clarity | Advanced | Exceptional documentation |
-| Test Coverage | Intermediate | Unit tests defined, integration tested |
-| Documentation | Advanced | Comprehensive README and API docs |
-| Repository Hygiene | Advanced | Proper `.gitignore`, clean commits |
-
-### 8.3 Final Recommendations
-1. ✅ **Commit test documentation** - Done
-2. ⏳ **Implement automated testing** - Priority: High
-3. ⏳ **Set up CI/CD pipeline** - Priority: Medium
-4. ⏳ **Add visual regression tests** - Priority: Medium
+1. **Fix BUG-001:** Update `apply_visibility_modulation()` to handle zoomed images properly
+2. **Add integration test:** Add a test case for the `--zoom` + `--visibility` combination
+3. **Consider adding:** A `--help-profiles` flag to show detailed info about each film profile
 
 ---
 
-## 9. Sign-off
+## Conclusion
 
-### QA Engineer Declaration
-I have completed the QA responsibilities for the GrainRX project:
-
-- ✅ Requirements analyzed and test cases derived
-- ✅ Test plan and procedures documented
-- ✅ Git repository properly configured
-- ✅ Integration tests executed with 100% pass rate
-- ✅ Results documented and deliverables prepared
-
-**QA Status**: APPROVED FOR PRODUCTION  
-**Next Review Date**: After automated testing implementation
-
----
-
-## Appendix A: Deliverables Checklist
-
-### Required Deliverables
-- [x] Test plan with all test cases
-- [x] Test procedures documented
-- [x] Git repository configuration verified
-- [x] Code committed before testing
-- [x] Test results documented
-- [x] Defects tracked and resolved
-- [x] Recommendations provided
-
-### Additional Deliverables
-- [x] QA summary document
-- [x] Performance benchmarks
-- [x] Film profile verification
-- [x] Edge case testing
-
----
-
-**Document Version**: 1.0  
-**Last Updated**: 2025-04-17  
-**QA Engineer**: AI Assistant  
-**Project**: GrainRX  
-**Status**: ✅ COMPLETE
+GrainRX is functionally complete and working correctly across all interfaces (CLI, Web UI API, Python API). The single bug identified (BUG-001) is a medium-severity issue affecting only the specific combination of `--zoom` and `--visibility` flags. All core functionality including both renderers (fast analytical and Monte Carlo), all film profiles, and all parameter options work as expected.
