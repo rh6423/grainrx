@@ -21,6 +21,27 @@ For color stocks, the three emulsion layers have different characteristics:
   - Green-sensitive (middle): medium grains
   - Red-sensitive (bottom): finest grains, least visible
 Channel parameters are given in [R, G, B] order to match numpy's RGB layout.
+
+Parameter Provenance
+--------------------
+These parameters were derived through a combination of:
+
+1. **Published measurements**: Base values informed by the Newson et al. IPOL
+   2017 paper and related literature on film grain characterization.
+
+2. **Visual calibration**: Parameters tuned by comparing rendered output to
+   reference film scans (35mm, 4000 DPI) until visual characteristics matched:
+   - Grain coarseness at native ISO
+   - Clumping behavior (sigma_r/mu_r ratio)
+   - Per-channel grain differences for color stocks
+
+3. **Relative scaling**: Within each manufacturer's lineup, parameters scaled
+   proportionally to ISO and known grain characteristics (e.g., T-grain films
+   have lower sigma_r than traditional cubic crystals at the same speed).
+
+These are approximations designed to capture the *character* of each film stock,
+not exact physical measurements. For production work requiring precise film
+matching, validate against your own reference scans and adjust parameters as needed.
 """
 
 

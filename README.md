@@ -105,6 +105,10 @@ Use for:
 
 ## Quick Start
 
+**Renderer selection guide:**
+- **`--fast`**: Use for iteration, batch processing, and most normal use cases (~100-500x faster)
+- **`--mc N`**: Use for reference quality, extreme zoom, or very coarse grain where authentic clumping matters
+
 ```bash
 # FAST: B&W with Kodak Tri-X grain (~0.1s for 1024x1024)
 python render.py photo.jpg -o grainy.jpg --profile tri-x --bw --fast
@@ -118,12 +122,30 @@ python render.py photo.jpg -o hq.png --profile tri-x --bw --mc 200
 # MC: Quick preview (fewer samples)
 python render.py photo.jpg -o preview.jpg --profile hp5 --bw --mc 30
 
+# For very coarse grain (Delta 3200), MC renderer preserves authentic clumping:
+python render.py photo.jpg -o delta3200.png --profile delta3200 --bw --mc 100
+
 # Custom parameters
 python render.py photo.jpg -o custom.jpg --mu-r 0.06 --sigma-r 0.02 --fast
 
 # List all film profiles
 python render.py --list-profiles
 ```
+
+## Sample Outputs
+
+The following examples demonstrate different film profiles applied to the same source image:
+
+| Original | Tri-X 400 (B&W) | Portra 400 (Color) | Delta 3200 (B&W) |
+|----------|-----------------|--------------------|------------------|
+| ![Original](gui/outputs/sample_original.jpg) | ![Tri-X](gui/outputs/sample_trix_bw.jpg) | ![Portra 400](gui/outputs/sample_portra400_color.jpg) | ![Delta 3200](gui/outputs/sample_delta3200_bw.jpg) |
+
+**Notes:**
+- **Tri-X 400**: Pronounced, irregular grain with strong clumping — the iconic photojournalism look
+- **Portra 400**: Fine, subtle grain with per-channel variation — professional color negative
+- **Delta 3200**: Dramatically large grain that becomes a textural element — extreme high-speed film
+
+Rendered with the fast analytical renderer (`--fast`). For maximum realism on coarse-grain profiles like Delta 3200, use the Monte Carlo renderer (`--mc 100+`).
 
 ## Running the Web UI
 
