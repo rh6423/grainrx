@@ -15,7 +15,7 @@ This directory contains sample outputs demonstrating GrainRX's film grain synthe
 
 | Image | Description |
 |-------|-------------|
-| `fast_trix_bw.png` | Tri-X 400 using fast analytical renderer (~0.007s) |
+| `fast_trix_bw.png` | Tri-X 400 using fast analytical renderer (~0.007s at 256px max dimension) |
 | `mc_trix_bw.png` | Tri-X 400 using Monte Carlo renderer, 100 samples (~0.3s) |
 | `fast_vs_mc_comparison.png` | Side-by-side comparison of both renderers |
 

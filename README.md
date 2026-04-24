@@ -258,12 +258,10 @@ Run `python render.py --list-profiles` for the full list. Highlights:
 ```python
 import numpy as np
 from PIL import Image
-from film_grain import (
-    render_grayscale, render_color, warmup_jit,       # MC renderer
-    render_grayscale_fast, render_color_fast,           # Fast renderer
-    get_profile,
-    apply_visibility_modulation,
-)
+from core.profiles import get_profile
+from core.renderer import render_grayscale, render_color, warmup_jit  # MC renderer
+from core.renderer_fast import render_grayscale_fast, render_color_fast  # Fast renderer
+from core.postprocess import apply_visibility_modulation
 
 img = np.array(Image.open("photo.jpg"))
 profile = get_profile("tri-x")

@@ -54,8 +54,8 @@ jobs:
 
       - name: Check formatting with Black
         run: |
-          black --check core/ tests/ render.py gui/app.py || true
+          black --check core/ tests/ render.py gui/app.py
 
       - name: Lint with flake8
         run: |
-          flake8 core/ tests/ render.py --max-line-length=100 --ignore=E501,W503 || true
+          flake8 core/ tests/ render.py --max-line-length=100 --ignore=E501,W503
